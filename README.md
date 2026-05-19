@@ -25,9 +25,9 @@ By doing so, it completely bypasses the system DNS resolver – which means **no
 | 🔍 **Multi‑DNS Comparison** | Choose up to 4 DNS servers (Google, Cloudflare, Shecan, Begzar, etc.) and compare their responses side by side in a clean table. |
 | 📈 **Advanced Reachability Test** | Test **7 different protocols** (ICMP, TCP/80, TCP/443, UDP/53, HTTP GET, HTTPS GET, TLS handshake) on the IPs obtained from any resolver. |
 | 🔄 **Auto‑Update** | After you pick a resolver, DNS Fighter remembers your choice and automatically updates the `hosts` file at any interval you set (e.g., every 2 hours). |
-| 📁 **Domain Categorization** | Organise your domains in a structured `domains.txt` file (Fonts, CDNs, Trackers, etc.). New domains go into `User Custom`. |
+| 📁 **Domain Categorization** | Organise your domains in a structured [`domains.txt`](https://github.com/ahmadpromax/Dns_Fighter/blob/main/domains.txt) file (Fonts, CDNs, Trackers, etc.). New domains go into `User Custom`. |
 | 🎮 **Interactive & Non‑Interactive Modes** | Use it manually or integrate it into scripts and Task Scheduler with command‑line arguments. |
-| 💰 **Free & Open Source** | Released under the **MIT License**. No strings attached, but your support keeps the project alive. |
+| 💰 **Free & Open Source** | Released under the **MIT License** (see [`LICENSE`](https://github.com/ahmadpromax/Dns_Fighter/blob/main/LICENSE)). No strings attached, but your support keeps the project alive. |
 
 ---
 
@@ -35,12 +35,11 @@ By doing so, it completely bypasses the system DNS resolver – which means **no
 
 If DNS Fighter makes your browsing safer and faster, please consider giving this project a **⭐ Star on GitHub** – it helps others discover it. You can also support me via cryptocurrencies:
 
-**USDT (TRC20)**: TQWRW7Zo35WyqZSBYGp4uEycNu7P8bBYDs
-
-**USDT (BEP20)**: 0x6a0f997D86B2A32AE973947C73800e6688F4e5d2
-
-**USDT (TON)**:   UQBi75cUao86m8EIxCYWSLUqo4mP28DX3ZcBqvQZGvnfrGPI
-
+```
+USDT (TRC20): TQWRW7Zo35WyqZSBYGp4uEycNu7P8bBYDs
+USDT (BEP20): 0x6a0f997D86B2A32AE973947C73800e6688F4e5d2
+USDT (TON):   UQBi75cUao86m8EIxCYWSLUqo4mP28DX3ZcBqvQZGvnfrGPI
+```
 
 > Every star and donation encourages further development. Thank you! 🙏
 
@@ -62,6 +61,7 @@ If DNS Fighter makes your browsing safer and faster, please consider giving this
    ```cmd
    pip install dnspython -i https://mirror-pypi.runflare.com/simple/ --trusted-host mirror-pypi.runflare.com
    ```
+
    (If the mirror fails, just use `pip install dnspython`.)
 
 ---
@@ -87,7 +87,7 @@ After the main comparison table appears, you can:
 
 - Enter a **number** to use that resolver’s results for **all** domains.  
 - Enter **`p`** to pick per domain individually.  
-- Enter **`c`** to use the consensus (most frequent IP) per domain.  
+- Enter **`c`** to use the **consensus** (the IP that appears most often across all selected DNS servers) per domain.  
 - Enter **`a`** to run the **advanced reachability test** (protocol checks) on a specific resolver.
 
 ### 2️⃣ Advanced Reachability Test
@@ -130,11 +130,11 @@ python dns_fighter.py --non-interactive --domains-file domains.txt --dns-list 1,
 
 | File | Purpose |
 |------|---------|
-| `dns_fighter.py` | Main script. |
-| `domains.txt` | Categorized domain list (editable). |
-| `admin_run.bat` | Batch file to auto‑elevate privileges. |
+| [`dns_fighter.py`](https://github.com/ahmadpromax/Dns_Fighter/blob/main/dns_fighter.py) | Main script. |
+| [`domains.txt`](https://github.com/ahmadpromax/Dns_Fighter/blob/main/domains.txt) | Categorized domain list (editable). |
+| [`admin_run.bat`](https://github.com/ahmadpromax/Dns_Fighter/blob/main/admin_run.bat) | Batch file to auto‑elevate privileges. |
 | `last_resolver.txt` | Stores your last resolver choice (created automatically). |
-| `LICENSE` | MIT License. |
+| [`LICENSE`](https://github.com/ahmadpromax/Dns_Fighter/blob/main/LICENSE) | MIT License. |
 
 ---
 
