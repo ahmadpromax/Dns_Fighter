@@ -107,6 +107,8 @@ USDT (TON):   UQBi75cUao86m8EIxCYWSLUqo4mP28DX3ZcBqvQZGvnfrGPI
 ### Step 2: Install Dependency
 
 **Automatic (recommended):** Double‑click `install_dependencies.bat` inside the repository.
+or
+
 
 **Manual (if automatic fails):**
 ```cmd
@@ -123,7 +125,11 @@ pip install dnspython
 
 ### 1️⃣ Interactive Mode (default)
 
-Run as Administrator – double‑click `admin_run.bat` or open CMD as Administrator:
+**Automatic (recommended):** Double‑click `admin_run.bat` inside the repository.
+or
+
+
+**Manual:** open CMD as Administrator:
 
 ```cmd
 python dns_fighter.py
