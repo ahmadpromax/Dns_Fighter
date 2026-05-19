@@ -177,6 +177,3 @@ This project is licensed under the **MIT License** – you are free to use, modi
 
 **Enjoy a faster, more secure internet!**  
 **Ahmadpromax – 2026**
-```
-
-همین یک بلوک را کپی کرده و در فایل `README.md` ذخیره کنید.
