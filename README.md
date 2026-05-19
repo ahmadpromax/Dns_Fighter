@@ -32,7 +32,6 @@
   
   <div style="display: flex; flex-wrap: wrap; gap: 30px; justify-content: center;">
     
-    <!-- BEFORE -->
     <div style="flex: 1; min-width: 280px; background: rgba(0,0,0,0.4); border-radius: 20px; padding: 20px; border-left: 4px solid #ff4d4d;">
       <div style="color: #ff4d4d; font-weight: bold; text-align: center; font-size: 1.2em; margin-bottom: 15px;">❌ Without DNS Fighter</div>
       <div style="display: flex; flex-direction: column; gap: 12px;">
