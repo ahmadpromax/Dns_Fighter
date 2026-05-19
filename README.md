@@ -34,8 +34,11 @@ By doing so, it completely bypasses the system DNS resolver – which means **no
 ## ❤️ Support the Developer
 
 If DNS Fighter makes your browsing safer and faster, please consider giving this project a **⭐ Star on GitHub** – it helps others discover it. You can also support me via cryptocurrencies:
+
 USDT (TRC20): TQWRW7Zo35WyqZSBYGp4uEycNu7P8bBYDs
+
 USDT (BEP20): 0x6a0f997D86B2A32AE973947C73800e6688F4e5d2
+
 USDT (TON):   UQBi75cUao86m8EIxCYWSLUqo4mP28DX3ZcBqvQZGvnfrGPI
 
 
