@@ -1,1 +1,0 @@
-python -m pip install --upgrade pip && pip install dnspython -i https://mirror-pypi.runflare.com/simple/ --trusted-host mirror-pypi.runflare.com
