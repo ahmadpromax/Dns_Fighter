@@ -34,10 +34,10 @@ def set_console_title(title):
 LICENSE_SHORT = "MIT License - Copyright (c) 2026 Ahmadpromax"
 DONATION_LINKS = """
 Support the developer:
-  - Bitcoin:  bc1qxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-  - Ethereum: 0xXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-  - PayPal:   https://paypal.me/yourusername
-  - GitHub:   https://github.com/sponsors/Ahmadpromax
+  - USDT(trc20):  TQWRW7Zo35WyqZSBYGp4uEycNu7P8bBYDs
+  - USDT(bep20): 0x6a0f997D86B2A32AE973947C73800e6688F4e5d2
+  - USDT(ton):   UQBi75cUao86m8EIxCYWSLUqo4mP28DX3ZcBqvQZGvnfrGPI
+  - donate stars on GitHub:   https://github.com/ahmadpromax/Dns_Fighter
 """
 
 def print_intro():
