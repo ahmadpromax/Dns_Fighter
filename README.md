@@ -1,3 +1,11 @@
+<p align="right" style="margin-bottom: 0;">
+  <a href="README.md" style="text-decoration: none; font-weight: bold; padding: 6px 12px; border-radius: 6px; background-color: #2d2d2d; color: #ffffff;">🇬🇧 English</a>
+  &nbsp; &nbsp;
+  <a href="README.fa.md" style="text-decoration: none; font-weight: bold; padding: 6px 12px; border-radius: 6px; background-color: #2d2d2d; color: #ffffff;">🇮🇷 فارسی</a>
+</p>
+
+---
+
 <p align="center">
   <img src="banner.svg" alt="DNS Fighter Banner" width="100%">
 </p>
