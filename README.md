@@ -14,7 +14,8 @@
 
 ## 🚀 What is DNS Fighter?
 
-**DNS Fighter** is a powerful, multi‑threaded command‑line tool for Windows that automatically resolves domain names using multiple DNS servers and writes the obtained IP addresses directly into your **hosts** file. By doing so, it completely bypasses the system DNS resolver – which means **no more DNS poisoning attacks, faster web browsing, and full control over which IPs your computer connects to.**
+**DNS Fighter** is a powerful, multi‑threaded command‑line tool for Windows that automatically resolves domain names using multiple DNS servers and writes the obtained IP addresses directly into your **hosts** file.  
+By doing so, it completely bypasses the system DNS resolver – which means **no more DNS poisoning attacks, faster web browsing, and full control over which IPs your computer connects to.**
 
 > 💡 **What does this mean for you?**  
 > - **Stop hackers** from redirecting you to fake websites (DNS spoofing).  
@@ -25,66 +26,22 @@
 
 ---
 
-## 🧠 Architecture & How It Works (Graphical)
+## 🧠 Architecture Comparison
 
-<div style="background: linear-gradient(135deg, #0a0f2a 0%, #1a1a3e 100%); border-radius: 24px; padding: 30px 20px; margin: 40px 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;">
-  <h2 style="text-align: center; color: #ffffff; margin-bottom: 30px;">🧠 Normal Connection vs DNS Fighter</h2>
-  
-  <div style="display: flex; flex-wrap: wrap; gap: 30px; justify-content: center;">
-    
-    <div style="flex: 1; min-width: 280px; background: rgba(0,0,0,0.4); border-radius: 20px; padding: 20px; border-left: 4px solid #ff4d4d;">
-      <div style="color: #ff4d4d; font-weight: bold; text-align: center; font-size: 1.2em; margin-bottom: 15px;">❌ Without DNS Fighter</div>
-      <div style="display: flex; flex-direction: column; gap: 12px;">
-        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
-          <span style="background: #2d2d5a; padding: 6px 12px; border-radius: 20px;">🌐 Browser</span>
-          <span style="font-size: 20px;">→</span>
-          <span style="background: #2d2d5a; padding: 6px 12px; border-radius: 20px;">📡 DNS Request</span>
-        </div>
-        <div style="text-align: center; background: #3a1a1a; border-radius: 12px; padding: 10px; border: 1px dashed #ff4d4d;">
-          <div style="color: #ffaa00;">⚠️ DPI (Deep Packet Inspection)</div>
-          <div style="font-size: 12px;">Intercepts request → sends fake IP</div>
-        </div>
-        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
-          <span style="background: #2d2d5a; padding: 6px 12px; border-radius: 20px;">🎭 Fake Website</span>
-          <span style="font-size: 14px;">(Phishing / Blocked)</span>
-        </div>
-      </div>
-      <div style="margin-top: 18px; background: #1a1a2e; border-radius: 12px; padding: 12px;">
-        <div style="font-size: 13px; margin-bottom: 4px;">⏱️ <strong>DNS lookup delay</strong> → 20‑100 ms</div>
-        <div style="font-size: 13px; margin-bottom: 4px;">🔓 <strong>DNS poisoning risk</strong> → High</div>
-        <div style="font-size: 13px;">👁️ <strong>Privacy</strong> → Queries visible</div>
-      </div>
-    </div>
+The diagram below shows how DNS Fighter defeats DNS poisoning and DPI (Deep Packet Inspection) by using the local `hosts` file.
 
-    <!-- AFTER -->
-    <div style="flex: 1; min-width: 280px; background: rgba(0,0,0,0.4); border-radius: 20px; padding: 20px; border-left: 4px solid #00c6ff;">
-      <div style="color: #00c6ff; font-weight: bold; text-align: center; font-size: 1.2em; margin-bottom: 15px;">✅ With DNS Fighter</div>
-      <div style="display: flex; flex-direction: column; gap: 12px;">
-        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
-          <span style="background: #2d2d5a; padding: 6px 12px; border-radius: 20px;">🌐 Browser</span>
-          <span style="font-size: 20px;">→</span>
-          <span style="background: #2d2d5a; padding: 6px 12px; border-radius: 20px;">📁 hosts file</span>
-        </div>
-        <div style="text-align: center; background: #1a3a2a; border-radius: 12px; padding: 10px; border: 1px solid #00c6ff;">
-          <div style="color: #00c6ff;">🛡️ DPI cannot see the DNS request</div>
-          <div style="font-size: 12px;">No spoofing → direct connection</div>
-        </div>
-        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
-          <span style="background: #2d2d5a; padding: 6px 12px; border-radius: 20px;">✅ Real Website</span>
-        </div>
-      </div>
-      <div style="margin-top: 18px; background: #1a1a2e; border-radius: 12px; padding: 12px;">
-        <div style="font-size: 13px; margin-bottom: 4px;">⚡ <strong>DNS lookup delay</strong> → <span style="color: #00c6ff;">0 ms</span></div>
-        <div style="font-size: 13px; margin-bottom: 4px;">🔒 <strong>DNS poisoning risk</strong> → <span style="color: #00c6ff;">None</span></div>
-        <div style="font-size: 13px;">👁️ <strong>Privacy</strong> → No queries → more private</div>
-      </div>
-    </div>
-  </div>
-  
-  <div style="text-align: center; margin-top: 30px; font-size: 14px; color: #b0b0d0;">
-    💡 DNS Fighter stores resolved IPs directly into your <code>hosts</code> file, eliminating DNS lookups and blocking DPI‑based spoofing.
-  </div>
-</div>
+<p align="center">
+  <img src="architecture.svg" alt="Architecture Comparison" width="100%">
+</p>
+
+**How to read it:**
+
+| Without DNS Fighter | With DNS Fighter |
+|:---|:---|
+| Browser sends a **DNS request** over the network. | Browser reads the IP directly from the **hosts file**. |
+| DPI can **intercept** the request and send a **fake IP** (spoofing). | **No DNS request** is sent → DPI cannot see or manipulate anything. |
+| You are redirected to a **fake website** (phishing / blocked). | You go directly to the **real website**. |
+| 🐢 20‑100 ms delay per lookup, 🔓 high poisoning risk, 👁️ low privacy. | ⚡ **0 ms delay**, 🔒 **zero poisoning risk**, 👁️ **perfect privacy**. |
 
 ---
 
@@ -105,23 +62,23 @@
 
 ## 📂 Why These Domains in `domains.txt`?
 
-The included `domains.txt` contains **300+ carefully selected domains** organized into categories that bring immediate benefit to speed and privacy. Here is why each category was chosen:
+The included `domains.txt` contains **300+ carefully selected domains** organised into categories that bring immediate benefit to speed and privacy. Here is why each category was chosen:
 
 | Category | Example Domains | Benefit |
 |----------|----------------|---------|
-| **Fonts** | `fonts.googleapis.com`, `fonts.gstatic.com` | Used by almost every modern website. Caching their IPs makes fonts load instantly, eliminating font‑loading delays. |
-| **General CDNs** | `cdn.jsdelivr.net`, `ajax.googleapis.com`, `cdn.bootstrapcdn.com` | These serve common JavaScript/CSS libraries (jQuery, Bootstrap, etc.). Storing their IPs speeds up page rendering across thousands of sites. |
-| **Trackers & Analytics** | `google-analytics.com`, `connect.facebook.net`, `bat.bing.com` | Blocking or bypassing these reduces third‑party tracking, improves privacy, and often shortens page load time. |
-| **Ad Networks** | `doubleclick.net`, `criteo.com`, `adnxs.com` | Ads are a major source of delay. Resolving these domains (or even blocking them via `hosts`) can dramatically improve browsing speed. |
-| **Video Streaming** | `*.googlevideo.com`, `*.nflxvideo.net`, `*.vimeo.com` | Video platforms use separate CDNs for video chunks. Caching their IPs reduces buffering and improves streaming quality. |
-| **Captcha Services** | `recaptcha.net`, `api.hcaptcha.com` | CAPTCHA checks often delay form submissions. A faster connection to these services makes the user experience smoother. |
+| **Fonts** | `fonts.googleapis.com`, `fonts.gstatic.com` | Used by almost every modern website. Caching their IPs makes fonts load instantly. |
+| **General CDNs** | `cdn.jsdelivr.net`, `ajax.googleapis.com`, `cdn.bootstrapcdn.com` | Serves common JavaScript/CSS libraries (jQuery, Bootstrap). Storing their IPs speeds up page rendering across thousands of sites. |
+| **Trackers & Analytics** | `google-analytics.com`, `connect.facebook.net`, `bat.bing.com` | Reduces third‑party tracking, improves privacy, and often shortens page load time. |
+| **Ad Networks** | `doubleclick.net`, `criteo.com`, `adnxs.com` | Ads are a major source of delay. Resolving (or blocking) them dramatically improves browsing speed. |
+| **Video Streaming** | `*.googlevideo.com`, `*.nflxvideo.net`, `*.vimeo.com` | Video platforms use separate CDNs for video chunks. Caching their IPs reduces buffering and improves streaming. |
+| **Captcha Services** | `recaptcha.net`, `api.hcaptcha.com` | CAPTCHA checks delay form submissions. A faster connection to these services makes the user experience smoother. |
 | **Microsoft Updates** | `*.update.microsoft.com`, `*.dl.delivery.mp.microsoft.com` | Windows and Office updates become faster when DNS lookup is skipped. |
 | **WordPress Resources** | `api.wordpress.org`, `downloads.wordpress.org` | For WordPress users, plugin/theme updates and downloads are noticeably quicker. |
 | **Iranian CDNs & Tools** | `*.arvancloud.ir`, `*.parspack.com`, `iranhtml5.ir` | Local CDNs are much faster for users inside Iran. Including them resolves connection delays caused by international routes. |
 | **TradingView & Financial** | `*.tradingview.com`, `*.binance.com` (optional) | Traders and investors benefit from sub‑second resolution for real‑time market data. |
-| **User Custom** | (your own domains) | You can add any domain you frequently visit. The script will keep it in a separate category and never touch its IP unless you change it. |
+| **User Custom** | (your own domains) | Add any domain you frequently visit. The script keeps it in a separate category and never touches its IP unless you change it. |
 
-> 💡 **How to use it?** Simply run DNS Fighter, select **"Use existing categories"**, and the tool will resolve and store all these domains’ IPs into your `hosts` file. You can edit `domains.txt` anytime – the script preserves the category structure.
+> 💡 **How to use it?** Just run DNS Fighter, select **"Use existing categories"**, and the tool will resolve and store all these domains’ IPs into your `hosts` file. You can edit `domains.txt` anytime – the script **preserves the category structure**.
 
 ---
 
@@ -258,6 +215,7 @@ python dns_fighter.py --non-interactive --domains-file domains.txt --dns-list 1,
 |------|---------|
 | [`dns_fighter.py`](dns_fighter.py) | Main script. |
 | [`banner.svg`](banner.svg) | Banner image for README. |
+| [`architecture.svg`](architecture.svg) | Architecture comparison diagram. |
 | [`domains.txt`](domains.txt) | Categorized domain list (editable). |
 | [`admin_run.bat`](admin_run.bat) | Batch file to auto‑elevate privileges. |
 | [`install_dependencies.bat`](install_dependencies.bat) | Automatically installs the required library. |
