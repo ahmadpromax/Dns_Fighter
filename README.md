@@ -1,5 +1,3 @@
-بسیار خب، معذرت می‌خوام. در زیر **کل محتوای فایل `README.md`** در یک بلوک واحد قرار دارد. می‌توانید تمام آن را یکجا کپی کنید.
-
 ```markdown
 # ⚔️ DNS Fighter – Stop DNS Poisoning & Speed Up Your Browsing
 
