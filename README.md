@@ -37,7 +37,7 @@ If DNS Fighter makes your browsing safer and faster, please consider giving this
 USDT (TRC20): TQWRW7Zo35WyqZSBYGp4uEycNu7P8bBYDs
 USDT (BEP20): 0x6a0f997D86B2A32AE973947C73800e6688F4e5d2
 USDT (TON):   UQBi75cUao86m8EIxCYWSLUqo4mP28DX3ZcBqvQZGvnfrGPI
-```
+
 
 > Every star and donation encourages further development. Thank you! 🙏
 
@@ -59,7 +59,6 @@ USDT (TON):   UQBi75cUao86m8EIxCYWSLUqo4mP28DX3ZcBqvQZGvnfrGPI
    ```cmd
    pip install dnspython -i https://mirror-pypi.runflare.com/simple/ --trusted-host mirror-pypi.runflare.com
    ```
-
    (If the mirror fails, just use `pip install dnspython`.)
 
 ---
