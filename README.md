@@ -34,3 +34,126 @@ By doing so, it completely bypasses the system DNS resolver – which means **no
 ## ❤️ Support the Developer
 
 If DNS Fighter makes your browsing safer and faster, please consider giving this project a **⭐ Star on GitHub** – it helps others discover it. You can also support me via cryptocurrencies:
+USDT (TRC20): TQWRW7Zo35WyqZSBYGp4uEycNu7P8bBYDs
+USDT (BEP20): 0x6a0f997D86B2A32AE973947C73800e6688F4e5d2
+USDT (TON): UQBi75cUao86m8EIxCYWSLUqo4mP28DX3ZcBqvQZGvnfrGPI
+
+
+> Every star and donation encourages further development. Thank you! 🙏
+
+---
+
+## 📦 Requirements
+
+- **Windows** 7 / 8 / 10 / 11  
+- **Python** 3.6 or higher  
+- **Administrator rights** (to modify `C:\Windows\System32\drivers\etc\hosts`)  
+
+---
+
+## 🛠️ Installation
+
+1. **Clone or download** this repository.  
+2. **Install the required library** (use an Iranian mirror if needed):
+
+   ```cmd
+   pip install dnspython -i https://mirror-pypi.runflare.com/simple/ --trusted-host mirror-pypi.runflare.com
+   
+   (If the mirror fails, just use pip install dnspython.)
+
+   )
+
+🎮 How to Use
+1️⃣ Interactive Mode (default)
+Run as Administrator – you can double‑click admin_run.bat or open CMD as Administrator and type:
+
+python dns_fighter.py
+
+Then follow the prompts:
+
+Choose domain source (use existing categories or add new domains manually).
+
+Pick up to 4 DNS resolvers.
+
+Set timeout (1‑5 seconds, default 2).
+
+Enable/disable ping check and Auto‑Update.
+
+After the main comparison table appears, you can:
+
+Enter a number to use that resolver’s results for all domains.
+
+Enter p to pick per domain individually.
+
+Enter c to use the consensus (most frequent IP) per domain.
+
+Enter a to run the advanced reachability test (protocol checks) on a specific resolver.
+
+2️⃣ Advanced Reachability Test
+Once you select a and choose a resolver, DNS Fighter will:
+
+Test each resolved IP against 7 protocols.
+
+Show a separate table with ✓ / ✗.
+
+Ask you which protocols must succeed.
+
+Only keep domains that pass all selected protocols – then save them.
+
+3️⃣ Auto‑Update Mode
+When you enable Auto‑Update, the script:
+
+Runs interactively once to let you choose a resolver (or consensus).
+
+Saves your choice into last_resolver.txt.
+
+Then enters an infinite loop and updates the hosts file every X hours without asking any further questions – exactly repeating your previous selection.
+
+4️⃣ Non‑Interactive Mode (for automation)
+python dns_fighter.py --non-interactive --domains-file domains.txt --dns-list 1,4 --ping --timeout 3
+
+Argument	Description
+--auto-update	Run continuously.
+--interval	Interval in seconds (for auto‑update).
+--domains-file	Plain text file with domains (one per line, no categories).
+--dns-list	Comma‑separated DNS keys (e.g., 1,3,5 or local).
+--non-interactive	No user prompts – auto‑approve.
+--use-resolver	Force resolver number N (1‑based) for all domains.
+--ping	Enable ping checks.
+--timeout	DNS resolution timeout (1‑5 seconds, default 2).
+📂 File Structure
+File	Purpose
+dns_fighter.py	Main script.
+domains.txt	Categorized domain list (editable).
+admin_run.bat	Batch file to auto‑elevate privileges.
+last_resolver.txt	Stores your last resolver choice (created automatically).
+LICENSE	MIT License.
+🔧 Example domains.txt (simplified)
+text
+# ==================== Fonts ====================
+fonts.googleapis.com
+fonts.gstatic.com
+
+# ==================== General CDNs ====================
+cdn.jsdelivr.net
+ajax.googleapis.com
+
+# ==================== User Custom ====================
+# Your manually added domains go here
+The script preserves category order and will never mess up your structure.
+
+❓ Troubleshooting
+Issue	Solution
+Administrator privileges required	Run CMD or the batch file as Administrator.
+No module named 'dns'	Install dnspython: pip install dnspython.
+File "domains.txt" gets messed up	Delete it and let the script recreate a fresh one, or use the provided template. The latest version fully protects category headers.
+Advanced test says "No valid IPs"	Make sure the resolver you selected actually returned some IPs (check the main table).
+📄 License
+This project is licensed under the MIT License – you are free to use, modify, and distribute it. However, please give credit to the original author (Ahmadpromax on GitHub) and consider supporting the project with a ⭐ star or a donation.
+
+Enjoy a faster, more secure internet!
+Ahmadpromax – 2026
+
+text
+
+Simply copy the entire block above and paste it into your `README.md` file. All formatting will work perfectly on GitHub.
