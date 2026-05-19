@@ -1,3 +1,6 @@
+<p align="center">
+  <img src="banner.svg" alt="DNS Fighter Banner" width="100%">
+</p>
 
 <div dir="rtl" align="center">
 
