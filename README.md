@@ -31,7 +31,7 @@ By doing so, it completely bypasses the system DNS resolver – which means **no
 The diagram below shows how DNS Fighter defeats DNS poisoning and DPI (Deep Packet Inspection) by using the local `hosts` file.
 
 <p align="center">
-  <img src="architecture.svg" alt="Architecture Comparison" width="100%">
+  <img src="https://raw.githubusercontent.com/ahmadpromax/Dns_Fighter/main/architecture.svg?sanitize=true" alt="Architecture Comparison" width="100%">
 </p>
 
 **How to read it:**
