@@ -34,10 +34,9 @@ def set_console_title(title):
 LICENSE_SHORT = "MIT License - Copyright (c) 2026 Ahmadpromax"
 DONATION_LINKS = """
 Support the developer:
-  - USDT(trc20):  TQWRW7Zo35WyqZSBYGp4uEycNu7P8bBYDs
+  - USDT(trc20): TQWRW7Zo35WyqZSBYGp4uEycNu7P8bBYDs
   - USDT(bep20): 0x6a0f997D86B2A32AE973947C73800e6688F4e5d2
   - USDT(ton):   UQBi75cUao86m8EIxCYWSLUqo4mP28DX3ZcBqvQZGvnfrGPI
-  - donate stars on GitHub:   https://github.com/ahmadpromax/Dns_Fighter
 """
 
 def print_intro():
@@ -53,6 +52,7 @@ HOSTS_PATH = Path(r"C:\Windows\System32\drivers\etc\hosts")
 MAX_WORKERS = 40
 SELECTION_FILE = Path("last_resolver.txt")
 
+# Default categories – used only if domains.txt is missing or corrupted
 DEFAULT_CATEGORIES = {
     "Fonts": [
         "fonts.googleapis.com", "fonts.gstatic.com", "use.fontawesome.com",
@@ -140,8 +140,8 @@ DEFAULT_CATEGORIES = {
     ]
 }
 
-USER_CATEGORY = "User Custom"
-MISC_CATEGORY = "Misc"
+USER_CATEGORY = "User Custom"   # single catch-all for uncategorized and user-added domains
+# MISC_CATEGORY removed
 
 DNS_OPTIONS = {
     '0': ('local', 'System'),
@@ -280,12 +280,11 @@ def run_protocol_tests(domain_ip_map, resolver_name):
     return results
 
 def display_protocol_table(results, domain_ip_map):
-    """Display protocol test results with horizontal lines after each domain."""
     if not results:
         print("[!] No results to display.")
         return
     protocol_list = [p[0] for p in PROTOCOLS]
-    col_widths = [30]  # domain column
+    col_widths = [30]
     for proto in protocol_list:
         max_width = len(proto)
         for domain in results:
@@ -315,7 +314,7 @@ def display_protocol_table(results, domain_ip_map):
                 val = val[:col_widths[i+1]-5] + "..."
             row += f" {val:<{col_widths[i+1]-2}} |"
         print(row)
-        print(make_sep())   # horizontal line after each domain
+        print(make_sep())
     
     print(f"[*] Protocol test complete. {len(results)} domains tested.", flush=True)
 
@@ -440,45 +439,71 @@ def update_hosts_file(domain_ip_map):
         print("[!] Cannot write to hosts file. Run as Administrator.")
         return False
 
-# ==================== DOMAIN CATEGORY HANDLING ====================
+# ==================== DOMAIN CATEGORY HANDLING (MISC REMOVED) ====================
 def load_domains_categorized(filepath="domains.txt"):
+    """
+    Load domains.txt, using 'User Custom' as the default category for uncategorized lines.
+    If a legacy 'Misc' category exists, its domains are merged into 'User Custom'.
+    """
     if not os.path.exists(filepath):
-        return {cat: domains[:] for cat, domains in DEFAULT_CATEGORIES.items()}
+        return OrderedDict(DEFAULT_CATEGORIES)
+    
     categories = OrderedDict()
     current_cat = None
-    with open(filepath, 'r', encoding='utf-8') as f:
-        for line in f:
-            line = line.strip()
+    header_pattern = re.compile(r'^#\s*=+\s+(.+?)\s+=+\s*$')
+    
+    with open(filepath, 'r', encoding='utf-8-sig') as f:   # handle BOM
+        for raw_line in f:
+            line = raw_line.strip()
             if not line:
                 continue
-            if line.startswith('# =======') and line.endswith('======='):
-                parts = line.split('=')
-                if len(parts) >= 3:
-                    current_cat = parts[2].strip()
+            match = header_pattern.match(line)
+            if match:
+                cat_name = match.group(1).strip()
+                if cat_name and not cat_name.startswith('#'):
+                    current_cat = cat_name
                     if current_cat not in categories:
                         categories[current_cat] = []
             elif line.startswith('#'):
+                # ignore other comment lines
                 continue
             else:
+                # domain line
                 if current_cat is not None:
                     categories[current_cat].append(line)
                 else:
-                    if MISC_CATEGORY not in categories:
-                        categories[MISC_CATEGORY] = []
-                    categories[MISC_CATEGORY].append(line)
+                    # before first header -> put into User Custom
+                    if USER_CATEGORY not in categories:
+                        categories[USER_CATEGORY] = []
+                    categories[USER_CATEGORY].append(line)
+    
+    # Merge legacy 'Misc' category into User Custom if it exists
+    if "Misc" in categories:
+        if USER_CATEGORY not in categories:
+            categories[USER_CATEGORY] = []
+        categories[USER_CATEGORY].extend(categories["Misc"])
+        del categories["Misc"]
+    
+    # Remove empty categories
+    categories = OrderedDict((k, v) for k, v in categories.items() if k and v)
+    
     if not categories:
-        return {cat: domains[:] for cat, domains in DEFAULT_CATEGORIES.items()}
+        return OrderedDict(DEFAULT_CATEGORIES)
     return categories
 
 def save_domains_categorized(categories, filepath="domains.txt"):
+    """
+    Save categories preserving order. Only 'User Custom' is used as the catch-all.
+    """
     with open(filepath, 'w', encoding='utf-8') as f:
         for cat_name, domains in categories.items():
-            if not domains:
+            if not cat_name or not domains:
                 continue
+            unique_sorted = sorted(set(domains))
             f.write(f"\n# ==================== {cat_name} ====================\n")
-            for domain in sorted(set(domains)):
+            for domain in unique_sorted:
                 f.write(f"{domain}\n")
-    print(f"[*] Domains saved to {filepath} (categorized).")
+    print(f"[*] Domains saved to {filepath} (categories preserved).")
 
 def add_domains_to_custom_category(categories, new_domains):
     if USER_CATEGORY not in categories:
@@ -545,10 +570,12 @@ def interactive_setup(categories):
     print("\n=== DNS Fighter (Multi-DNS Resolver) ===\n")
     print("Domain source:")
     print("1. Use existing categories (load from domains.txt)")
-    print("2. Enter new domains manually")
+    print("2. Add new domains manually (will be added to 'User Custom')")
     source_choice = input("Choose [1/2]: ").strip()
-    new_categories = dict(categories)
+    
+    new_categories = OrderedDict(categories)
     domains_to_use = []
+    
     if source_choice == '1':
         print("\nWhich categories to resolve?")
         print("1. All categories")
@@ -572,6 +599,7 @@ def interactive_setup(categories):
             print("[!] Invalid choice. Using all categories.")
             domains_to_use = get_all_domains_from_categories(categories)
     else:
+        # Option 2: Add new domains manually – existing categories remain untouched
         print("\nEnter domains (one per line). Type 'done' when finished:")
         new_domains = []
         while True:
@@ -583,6 +611,7 @@ def interactive_setup(categories):
         if not new_domains:
             print("No domains entered. Exiting.")
             sys.exit(1)
+        
         existing_domains = get_all_domains_from_categories(categories)
         if existing_domains:
             print(f"\nThere are already {len(existing_domains)} domains in the categories.")
@@ -596,8 +625,9 @@ def interactive_setup(categories):
         else:
             domains_to_use = new_domains
             print(f"[*] Only the {len(new_domains)} newly entered domains will be resolved.")
+        
         new_categories = add_domains_to_custom_category(new_categories, new_domains)
-
+    
     selected_dns = interactive_dns_selection()
     
     while True:
@@ -666,7 +696,7 @@ def resolve_multi_dns(domains, dns_list, timeout=2):
     print("[*] Resolution complete. Preparing results table...\n", flush=True)
     return results
 
-# ==================== MULTI-THREADED PING FOR ALL RESOLVERS ====================
+# ==================== MULTI-THREADED PING ====================
 def check_pings_for_all_resolvers(domains, resolved_ips, timeout=2):
     ping_results = {domain: {} for domain in domains}
     total = 0
@@ -704,7 +734,7 @@ def check_pings_for_all_resolvers(domains, resolved_ips, timeout=2):
                     print(f"  Ping progress: {completed}/{total}", flush=True)
     return ping_results
 
-# ==================== TABLE DISPLAY (MAIN RESOLUTION) ====================
+# ==================== TABLE DISPLAY ====================
 def display_results_table_grid(combined_results, dns_names):
     domain_width = 30
     col_widths = [domain_width]
@@ -752,7 +782,7 @@ def display_results_table_grid(combined_results, dns_names):
         print(make_sep())
     print(f"[*] Table display complete. {len(combined_results)} rows shown.", flush=True)
 
-# ==================== SELECTION FUNCTIONS ====================
+# ==================== SELECTION & SAVING ====================
 def get_consensus_selection(results):
     selected = {}
     for domain, res in results.items():
