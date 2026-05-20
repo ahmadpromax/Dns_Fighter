@@ -193,6 +193,7 @@ python dns_fighter.py --non-interactive --domains-file domains.txt --dns-list 1,
 |------|---------|
 | `dns_fighter.py` | Main script |
 | `banner.svg` | Banner image for README |
+| `architecture.svg` | architecture image for README |
 | `domains.txt` | Categorised domain list (editable) |
 | `admin_run.bat` | Batch file to auto‑elevate privileges |
 | `install_dependencies.bat` | Automatically installs the library |
