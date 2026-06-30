@@ -67,7 +67,7 @@ The included `domains.txt` has **300+ carefully selected domains** to boost spee
 | **Microsoft Updates** | Faster Windows / Office updates |
 | **WordPress Resources** | Quicker plugin / theme downloads |
 | **Iranian CDNs & Tools** | Much faster for users inside Iran |
-| **User Custom** | Add your own domains |
+| **User Custom** | Add your own domains (by default +200 porn sites are added to this section) |
 
 > 💡 **How to use it:** Run DNS Fighter, select **"Use existing categories"**, and it resolves and stores all these domains for you. You can edit `domains.txt` anytime – the script preserves the structure.
 
