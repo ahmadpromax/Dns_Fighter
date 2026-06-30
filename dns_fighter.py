@@ -52,7 +52,10 @@ HOSTS_PATH = Path(r"C:\Windows\System32\drivers\etc\hosts")
 MAX_WORKERS = 40
 SELECTION_FILE = Path("last_resolver.txt")
 
-# Default categories – used only if domains.txt is missing or corrupted
+# 🔴 Blacklist IPs (DPI detection)
+BLACKLIST_IPS = {"10.10.34.34", "10.10.34.35", "10.10.34.36", "127.0.0.1"}
+
+# Default categories – used only if domains.txt is missing
 DEFAULT_CATEGORIES = {
     "Fonts": [
         "fonts.googleapis.com", "fonts.gstatic.com", "use.fontawesome.com",
@@ -140,8 +143,8 @@ DEFAULT_CATEGORIES = {
     ]
 }
 
-USER_CATEGORY = "User Custom"   # single catch-all for uncategorized and user-added domains
-# MISC_CATEGORY removed
+USER_CATEGORY = "User Custom"
+MISC_CATEGORY = "Misc"
 
 DNS_OPTIONS = {
     '0': ('local', 'System'),
@@ -409,16 +412,67 @@ def get_current_hosts_entries(domains):
                     current[domain] = ip
     return current
 
+def clean_hosts_from_blacklist():
+    """
+    Remove any lines from hosts file that contain blacklisted IPs.
+    Returns True if any lines were removed.
+    """
+    if not HOSTS_PATH.exists():
+        return False
+    
+    removed = False
+    new_lines = []
+    try:
+        with open(HOSTS_PATH, 'r', encoding='utf-8') as f:
+            lines = f.readlines()
+        
+        for line in lines:
+            stripped = line.strip()
+            if stripped and not stripped.startswith('#'):
+                parts = stripped.split()
+                if len(parts) >= 2:
+                    ip = parts[0]
+                    if ip in BLACKLIST_IPS:
+                        print(f"[!] Removing blacklisted IP from hosts: {ip} -> {parts[1]}")
+                        removed = True
+                        continue
+            new_lines.append(line)
+        
+        if removed:
+            with open(HOSTS_PATH, 'w', encoding='utf-8') as f:
+                f.writelines(new_lines)
+            print("[*] Hosts file cleaned of blacklisted IPs.")
+    except PermissionError:
+        print("[!] Cannot modify hosts file. Run as Administrator.")
+    except Exception as e:
+        print(f"[!] Error cleaning hosts: {e}")
+    
+    return removed
+
 def update_hosts_file(domain_ip_map):
     if not HOSTS_PATH.exists():
         HOSTS_PATH.touch()
+    
+    # Filter out blacklisted IPs
+    filtered_map = {}
+    for domain, ip in domain_ip_map.items():
+        if ip in BLACKLIST_IPS:
+            print(f"[!] Skipping {domain} -> {ip} (blacklisted DPI IP)")
+            continue
+        filtered_map[domain] = ip
+    
+    if not filtered_map:
+        print("[!] All entries were blacklisted. Nothing to save.")
+        return False
+    
     try:
         with open(HOSTS_PATH, 'r', encoding='utf-8') as f:
             lines = f.readlines()
     except PermissionError:
         print("[!] Cannot read hosts file. Run as Administrator.")
         return False
-    domains_to_update = set(domain_ip_map.keys())
+    
+    domains_to_update = set(filtered_map.keys())
     new_lines = []
     for line in lines:
         stripped = line.strip()
@@ -427,10 +481,12 @@ def update_hosts_file(domain_ip_map):
             if len(parts) >= 2 and parts[1] in domains_to_update:
                 continue
         new_lines.append(line)
-    for domain, ip in domain_ip_map.items():
+    
+    for domain, ip in filtered_map.items():
         if ip:
             new_lines.append(f"{ip} {domain}\n")
             print(f"[+] Updated: {domain} -> {ip}")
+    
     try:
         with open(HOSTS_PATH, 'w', encoding='utf-8') as f:
             f.writelines(new_lines)
@@ -439,12 +495,8 @@ def update_hosts_file(domain_ip_map):
         print("[!] Cannot write to hosts file. Run as Administrator.")
         return False
 
-# ==================== DOMAIN CATEGORY HANDLING (MISC REMOVED) ====================
+# ==================== DOMAIN CATEGORY HANDLING ====================
 def load_domains_categorized(filepath="domains.txt"):
-    """
-    Load domains.txt, using 'User Custom' as the default category for uncategorized lines.
-    If a legacy 'Misc' category exists, its domains are merged into 'User Custom'.
-    """
     if not os.path.exists(filepath):
         return OrderedDict(DEFAULT_CATEGORIES)
     
@@ -452,7 +504,7 @@ def load_domains_categorized(filepath="domains.txt"):
     current_cat = None
     header_pattern = re.compile(r'^#\s*=+\s+(.+?)\s+=+\s*$')
     
-    with open(filepath, 'r', encoding='utf-8-sig') as f:   # handle BOM
+    with open(filepath, 'r', encoding='utf-8-sig') as f:
         for raw_line in f:
             line = raw_line.strip()
             if not line:
@@ -465,26 +517,21 @@ def load_domains_categorized(filepath="domains.txt"):
                     if current_cat not in categories:
                         categories[current_cat] = []
             elif line.startswith('#'):
-                # ignore other comment lines
                 continue
             else:
-                # domain line
                 if current_cat is not None:
                     categories[current_cat].append(line)
                 else:
-                    # before first header -> put into User Custom
                     if USER_CATEGORY not in categories:
                         categories[USER_CATEGORY] = []
                     categories[USER_CATEGORY].append(line)
     
-    # Merge legacy 'Misc' category into User Custom if it exists
     if "Misc" in categories:
         if USER_CATEGORY not in categories:
             categories[USER_CATEGORY] = []
         categories[USER_CATEGORY].extend(categories["Misc"])
         del categories["Misc"]
     
-    # Remove empty categories
     categories = OrderedDict((k, v) for k, v in categories.items() if k and v)
     
     if not categories:
@@ -492,9 +539,6 @@ def load_domains_categorized(filepath="domains.txt"):
     return categories
 
 def save_domains_categorized(categories, filepath="domains.txt"):
-    """
-    Save categories preserving order. Only 'User Custom' is used as the catch-all.
-    """
     with open(filepath, 'w', encoding='utf-8') as f:
         for cat_name, domains in categories.items():
             if not cat_name or not domains:
@@ -599,7 +643,6 @@ def interactive_setup(categories):
             print("[!] Invalid choice. Using all categories.")
             domains_to_use = get_all_domains_from_categories(categories)
     else:
-        # Option 2: Add new domains manually – existing categories remain untouched
         print("\nEnter domains (one per line). Type 'done' when finished:")
         new_domains = []
         while True:
@@ -904,6 +947,9 @@ def load_selection():
 # ==================== MAIN UPDATE CYCLE ====================
 def run_update_cycle(domains, dns_list, ping_enabled, interactive_approval,
                      force_resolver_index=None, timeout=2):
+    # Clean hosts file from blacklisted IPs before starting
+    clean_hosts_from_blacklist()
+    
     dns_names = [name for (ip, name) in dns_list]
     print(f"\n[{time.ctime()}] Resolving domains using {len(dns_list)} DNS servers...")
     if ping_enabled and len(domains) > 50:
@@ -929,17 +975,23 @@ def run_update_cycle(domains, dns_list, ping_enabled, interactive_approval,
             if ip == "FAILED":
                 combined_results[domain][dns_name] = "FAILED"
             else:
-                ping_val = ping_times.get(domain, {}).get(dns_name)
-                if ping_val is None:
-                    combined_results[domain][dns_name] = f"{ip} (Timeout)"
+                # Check if IP is blacklisted
+                if ip in BLACKLIST_IPS:
+                    combined_results[domain][dns_name] = f"{ip} (BLACKLISTED)"
                 else:
-                    combined_results[domain][dns_name] = f"{ip} ({int(ping_val)}ms)"
+                    ping_val = ping_times.get(domain, {}).get(dns_name)
+                    if ping_val is None:
+                        combined_results[domain][dns_name] = f"{ip} (Timeout)"
+                    else:
+                        combined_results[domain][dns_name] = f"{ip} ({int(ping_val)}ms)"
 
     display_results_table_grid(combined_results, dns_names)
 
     def extract_ip(combined_str):
-        if combined_str == "FAILED":
+        if combined_str == "FAILED" or "BLACKLISTED" in combined_str:
             return None
+        if "Timeout" in combined_str:
+            return combined_str.split()[0]
         return combined_str.split()[0]
 
     pure_ip_map = {}
@@ -989,10 +1041,10 @@ def run_update_cycle(domains, dns_list, ping_enabled, interactive_approval,
         test_ip_map = {}
         for domain, resolvers in pure_ip_map.items():
             ip = resolvers.get(resolver_name)
-            if ip:
+            if ip and ip not in BLACKLIST_IPS:
                 test_ip_map[domain] = ip
         if not test_ip_map:
-            print("[!] No valid IPs found for the selected resolver. Aborting advanced test.")
+            print("[!] No valid IPs found for the selected resolver (blacklisted IPs filtered). Aborting advanced test.")
             return True, None
         proto_results = run_protocol_tests(test_ip_map, resolver_name)
         display_protocol_table(proto_results, test_ip_map)
@@ -1015,9 +1067,10 @@ def run_update_cycle(domains, dns_list, ping_enabled, interactive_approval,
     if selected_map is None:
         return True, None
 
-    selected_map = {d: ip for d, ip in selected_map.items() if ip is not None}
+    # Filter out blacklisted IPs from selected map
+    selected_map = {d: ip for d, ip in selected_map.items() if ip is not None and ip not in BLACKLIST_IPS}
     if not selected_map:
-        print("[!] No valid IPs selected. Exiting cycle.")
+        print("[!] All selected IPs are blacklisted. Nothing to save.")
         return True, None
 
     old_map = get_current_hosts_entries(domains)
@@ -1050,7 +1103,10 @@ def run_update_cycle(domains, dns_list, ping_enabled, interactive_approval,
     if interactive_approval and force_resolver_index is None and not advanced_requested:
         print("\nSummary of IPs to be saved:")
         for domain, ip in selected_map.items():
-            print(f"  {domain} -> {ip}")
+            if ip in BLACKLIST_IPS:
+                print(f"  {domain} -> {ip} (⚠️ BLACKLISTED - will NOT be saved)")
+            else:
+                print(f"  {domain} -> {ip}")
         while True:
             answer = input("Save these entries to hosts file? (y/n): ").strip().lower()
             if answer in ['y', 'yes']:
@@ -1066,6 +1122,8 @@ def run_update_cycle(domains, dns_list, ping_enabled, interactive_approval,
     print("[*] Updating hosts file...")
     if update_hosts_file(selected_map):
         flush_dns()
+        # Double-check clean hosts after update
+        clean_hosts_from_blacklist()
     else:
         print("[!] Failed to update hosts file.")
     return True, chosen_resolver_idx
